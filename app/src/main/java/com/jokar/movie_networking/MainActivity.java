@@ -89,13 +89,13 @@ public class MainActivity extends AppCompatActivity {
                 //   mTextView.setText(jsonObject.getString("title"));
 
                //TODO : parse Array
-                Map<String,Integer> companiesMaps = new HashMap<>();
+                Map<Integer,String> companiesMaps = new HashMap<>();
                 JSONArray jsonArray = jsonObject.getJSONArray("production_companies");
                 for (int i = 0; i < jsonArray.length(); i++) {
 
                     JSONObject object = jsonArray.getJSONObject(i);
-                    companiesMaps.put( object.getString("name"),object.getInt("id"));
-                    mTextView.setText(String.valueOf(companiesMaps.get("Fox 2000 Pictures")));
+                    companiesMaps.put( object.getInt("id"),object.getString("name"));
+                    mTextView.setText(companiesMaps.get(711));
 
 
                 }
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }
-
 
     }
 
