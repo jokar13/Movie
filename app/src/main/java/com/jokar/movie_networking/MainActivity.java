@@ -8,6 +8,10 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,6 +22,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new checkConnectionStatus().execute("http://www.androidinhindi.com/logindemo/login.php");
+        new checkConnectionStatus().execute("https://api.themoviedb.org/3/movie/550?api_key=062eab0d14418691ba911d6c731dde4e");
 
 
     }
@@ -49,24 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setDoOutput(true);
 
                 // code starts here
 
-                //TODO : builder for getting the input
-                Uri.Builder mBuilder = new Uri.Builder()
-                        .appendQueryParameter("username", "admin")
-                        .appendQueryParameter("password", "admin");
-
-                //TODO : create OutputStream and BufferWriter
-                OutputStream outputStream = urlConnection.getOutputStream();
-                BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream),8);
-                bufferedWriter.write(mBuilder.build().getEncodedQuery());
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-
-                urlConnection.connect();
 
                 //TODO : create InputStream and BufferReader
                 InputStream inputStream = urlConnection.getInputStream();
@@ -89,8 +80,30 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+
             mTextView = findViewById(R.id.Text);
-            mTextView.setText(s);
+
+            try {
+                //TODO : parse object
+                JSONObject jsonObject = new JSONObject(s);
+                //   mTextView.setText(jsonObject.getString("title"));
+
+               //TODO : parse Array
+                Map<String,Integer> companiesMaps = new HashMap<>();
+                JSONArray jsonArray = jsonObject.getJSONArray("production_companies");
+                for (int i = 0; i < jsonArray.length(); i++) {
+
+                    JSONObject object = jsonArray.getJSONObject(i);
+                    companiesMaps.put( object.getString("name"),object.getInt("id"));
+                    mTextView.setText(String.valueOf(companiesMaps.get("Fox 2000 Pictures")));
+
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
 
